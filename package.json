@@ -1,0 +1,22 @@
+{
+  "name": "liri",
+  "version": "1.0.0",
+  "description": "siri knock-off",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ojshakewell/LIRI.git"
+  },
+  "keywords": [
+    "liri"
+  ],
+  "author": "Brian Russell",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ojshakewell/LIRI/issues"
+  },
+  "homepage": "https://github.com/ojshakewell/LIRI#readme"
+}
