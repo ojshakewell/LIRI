@@ -2,23 +2,23 @@ var fs = require("fs");
 var request = require("request");
 var Twitter = require("twitter");
 var Spotify = require('node-spotify-api');
-
 var twitterCredentials = require("./assets/javascript/keys.js");
 
 //Make it so liri.js can take in one of the following commands:
 var inputCommand = process.argv[2];
+var search = process.argv[3];
 
 if (inputCommand === 'my-tweets'){
-  console.log('my-tweets');
+  //console.log('my-tweets');
   myTweets();
 } else if (inputCommand === 'spotify-this-song'){
-  console.log('spotify-this-song');
-  spotifyThis();
+  //console.log('spotify-this-song');
+  spotifyThis(search);
 } else if (inputCommand === 'movie-this'){
-  console.log('movie-this');
+  //console.log('movie-this');
   movieThis();
 } else if (inputCommand === 'do-what-it-says'){
-  console.log('do-what-it-says');
+  //console.log('do-what-it-says');
   doThis();
 };
 
@@ -49,9 +49,8 @@ function myTweets(){
   });
 };
 
-function spotifyThis(){
-  console.log("spotify here")
-//`node liri.js spotify-this-song '<song name here>'`
+function spotifyThis(song){
+  //`node liri.js spotify-this-song '<song name here>'`
   var clientID = "25cb26defd4042a1b89cd1a3b42b5b83"
   var clientSecret = "dea0d19c9fae4865b01fc20f1f4f02e5"
 
@@ -60,45 +59,30 @@ function spotifyThis(){
     secret: clientSecret
   });
 
-  song = process.argv[3];
-
   if(!song === true){
-    song = "The Sign"
+    song = 'ace of base the sign'
   }
 
   spotify.search({ type: 'track', query: song }, function(err, data) {
       if (err) {
        return console.log('Error occurred: ' + err);
       }
- 
-      console.log(data.tracks.items[0].artists[0]);
-
+      console.log("artist: " + data.tracks.items[0].artists[0].name);
+      console.log("album: " + data.tracks.items[0].album.name);
+      console.log("song: " + data.tracks.items[0].name);
+      console.log("url: " + data.tracks.items[0].preview_url);
   });
 };
-/*   * This will show the following information about the song in your terminal/bash window
-     
-     * Artist(s)
-     
-     * The song's name
-     
-     * A preview link of the song from Spotify
-     
-     * The album that the song is from
-*/
-
 
 function movieThis(){
   // Basic Node application for requesting data from the OMDB website
-  var title = process.argv[3];
-
   var apiKey = "40e9cece";
 
-  if(!title === true){
-    title = "Mr. Nobody"
+  if(!search === true){
+    search = "Mr. Nobody"
   }
-
   // We then run the request module on a URL with a JSON 
-  request("http://www.omdbapi.com/?t=" + title + "&y=&plot=short&apikey=" + apiKey , function(error, response, body) {
+  request("http://www.omdbapi.com/?t=" + search + "&y=&plot=short&apikey=" + apiKey , function(error, response, body) {
 
     // If there were no errors and the response code was 200 (i.e. the request was successful)...
     if (!error && response.statusCode === 200) {
@@ -116,10 +100,20 @@ function movieThis(){
 };
 
 //4. `node liri.js do-what-it-says`
+//* It should run `spotify-this-song` for "I Want it That Way," as follows the text in `random.txt`.
 function doThis(){
-  console.log("do it here")
-   //var randomText = require("./random.txt");
-   //* Using the `fs` Node package, LIRI will take the text inside of random.txt and then use it to call one of LIRI's commands.
-     
-     //* It should run `spotify-this-song` for "I Want it That Way," as follows the text in `random.txt`.
+  fs.readFile("./random.txt", "utf8", function(error, data) {
+
+    if (error) {
+      return console.log(error);
+    }
+
+    var dataArr = data.split(",");
+    var command = dataArr[0].toString();
+    var search = dataArr[1];
+
+    if (command === 'spotify-this-song'){
+      spotifyThis(search);
+    }
+  });
 };
